@@ -107,6 +107,9 @@ export default function ExplainPage() {
     if (!activeCourseId || !fileName) return;
     setExplaining(true);
     setExplanation("");
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollTop = 0;
+    }
     try {
       const prompt =
         language === "ar"
