@@ -107,14 +107,16 @@ export default function ExplainPage() {
     if (!activeCourseId || !fileName) return;
     setExplaining(true);
     setExplanation("");
+    setChatMessages([]);
+    setChatHistory([]);
     if (chatScrollRef.current) {
       chatScrollRef.current.scrollTop = 0;
     }
     try {
       const prompt =
         language === "ar"
-          ? "اشرح محتوى هذه الصفحة بالتفصيل"
-          : "Explain the content of this page in detail";
+          ? `اشرح محتوى الصفحة ${pageNum} بالتفصيل`
+          : `Explain the content of page ${pageNum} in detail`;
       const response = await explainQuestion(
         activeCourseId,
         prompt,
@@ -124,6 +126,10 @@ export default function ExplainPage() {
         fileName
       );
       setExplanation(response.answer);
+      setChatHistory([
+        { role: "user", content: prompt },
+        { role: "assistant", content: response.answer },
+      ]);
     } catch {
       setExplanation(
         language === "ar" ? "حدث خطأ أثناء الشرح." : "An error occurred."
