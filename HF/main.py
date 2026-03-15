@@ -21,7 +21,7 @@ from models import (
     MajorAssistRequest,
     MajorAssistResponse,
 )
-from rag import RAGEngine
+from rag import RAGEngine, extract_page_text
 from safety import SAFETY_SYSTEM_BLOCK, check_blocked
 from tools import generate_schedule, generate_major_report
 
@@ -40,24 +40,25 @@ logging.basicConfig(
 )
 logger = logging.getLogger("wajehni")
 
-DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+DATA_DIR = Path(__file__).resolve().parent / "data"
 COURSES_PATH = DATA_DIR / "courses.json"
 
 EXPLAIN_SYSTEM_PROMPT = f"""
 {SAFETY_SYSTEM_BLOCK}
 <role>
-You are an Arabic-speaking educational assistant called Wajehni (وجهني).
-Your job is to explain course material clearly and thoroughly in Arabic.
+You are an educational assistant called Wajehni (وجهني).
+Your job is to explain course material clearly and thoroughly.
 </role>
 
 <instructions>
 - Read the provided context chunks carefully
-- Explain the concept the student is asking about in clear, simple Arabic
+- Explain the content the student is asking about clearly and in detail
 - Use examples when helpful
 - Reference specific parts of the slides when relevant
-- If the context does not contain enough information to answer, say so honestly
-- NEVER solve homework, assignments, or exams — only explain concepts
 - You have access to conversation history — use it to understand follow-up questions
+- Respond in the language specified in the language tag. If language is "ar", respond in Arabic. If "en", respond in English.
+- When you see a "explain_page" request, give a detailed breakdown of everything on that page/slide
+- At the end of your explanation, add a section called "Vocabulary" (or "مفردات" in Arabic) listing technical or advanced terms (above B1 English level) found in the content with their translations to the other language
 </instructions>
 """
 
@@ -79,7 +80,7 @@ def load_courses() -> list[CourseFile]:
 async def lifespan(app: FastAPI):
     global courses_db, openai_client, rag_engine
 
-    api_key = os.getenv("OPENAI_API_KEY", "")
+    api_key = os.getenv("OPENAI_API_KEY", "").strip()
     if not api_key:
         logger.error("OPENAI_API_KEY is not set")
         raise RuntimeError("OPENAI_API_KEY environment variable is required")
@@ -145,16 +146,29 @@ async def explain(request: ExplainRequest):
     if not course_exists:
         raise HTTPException(status_code=404, detail=f"Course {request.course_id} not found")
 
-    chunks = engine.retrieve(request.course_id, request.question)
+    lang = request.language or "ar"
+    source_ids: list[str] = []
 
-    if not chunks:
-        return ExplainResponse(
-            answer="لم أجد معلومات كافية في المادة للإجابة على سؤالك. تأكد من رفع ملفات المقرر.",
-            sources=[],
-        )
-
-    context_xml = engine.build_context_xml(chunks)
-    source_ids = [c.chunk_id for c in chunks]
+    if request.page_number is not None and request.filename:
+        pdf_path = DATA_DIR / request.filename
+        if not pdf_path.exists():
+            raise HTTPException(status_code=404, detail="PDF file not found")
+        page_text = extract_page_text(pdf_path, request.page_number)
+        if not page_text.strip():
+            no_text = "لا يوجد نص في هذه الصفحة." if lang == "ar" else "No text found on this page."
+            return ExplainResponse(answer=no_text, sources=[])
+        context_xml = f'<context>\n<page number="{request.page_number}">\n{page_text}\n</page>\n</context>'
+    else:
+        chunks = engine.retrieve(request.course_id, request.question)
+        if not chunks:
+            no_info = (
+                "لم أجد معلومات كافية في المادة للإجابة على سؤالك. تأكد من رفع ملفات المقرر."
+                if lang == "ar"
+                else "I couldn't find enough information in the course material. Make sure you've uploaded the course files."
+            )
+            return ExplainResponse(answer=no_info, sources=[])
+        context_xml = engine.build_context_xml(chunks)
+        source_ids = [c.chunk_id for c in chunks]
 
     messages: list[dict[str, str]] = [
         {"role": "system", "content": EXPLAIN_SYSTEM_PROMPT},
@@ -163,18 +177,18 @@ async def explain(request: ExplainRequest):
     if request.history:
         messages.append({
             "role": "user",
-            "content": f"{context_xml}\n\n<question>{request.history[0].content}</question>",
+            "content": f"<language>{lang}</language>\n{context_xml}\n\n<question>{request.history[0].content}</question>",
         })
         for msg in request.history[1:]:
             messages.append({"role": msg.role, "content": msg.content})
         messages.append({
             "role": "user",
-            "content": f"{context_xml}\n\n<question>{request.question}</question>",
+            "content": f"<language>{lang}</language>\n{context_xml}\n\n<question>{request.question}</question>",
         })
     else:
         messages.append({
             "role": "user",
-            "content": f"{context_xml}\n\n<question>{request.question}</question>",
+            "content": f"<language>{lang}</language>\n{context_xml}\n\n<question>{request.question}</question>",
         })
 
     response = client.chat.completions.create(

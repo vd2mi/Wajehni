@@ -20,7 +20,7 @@ EMBEDDING_MODEL = "text-embedding-3-large"
 EMBEDDING_DIM = 3072
 TOP_K = 5
 
-DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+DATA_DIR = Path(__file__).resolve().parent / "data"
 
 tokenizer = tiktoken.encoding_for_model("gpt-4o")
 
@@ -36,6 +36,23 @@ def extract_pdf_text(pdf_path: Path) -> str:
         pages.append(page.get_text("text"))
     doc.close()
     return "\n".join(pages)
+
+
+def extract_page_text(pdf_path: Path, page_number: int) -> str:
+    doc = fitz.open(str(pdf_path))
+    if page_number < 1 or page_number > len(doc):
+        doc.close()
+        return ""
+    text = doc[page_number - 1].get_text("text")
+    doc.close()
+    return text
+
+
+def count_pdf_pages(pdf_path: Path) -> int:
+    doc = fitz.open(str(pdf_path))
+    count = len(doc)
+    doc.close()
+    return count
 
 
 @dataclass

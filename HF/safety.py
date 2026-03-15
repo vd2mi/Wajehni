@@ -1,11 +1,9 @@
 import re
 
 BLOCKED_PATTERNS: list[re.Pattern] = [
-    re.compile(r"(حل|أجب|جاوب).*(واجب|تمرين|اختبار|امتحان|مسألة)", re.IGNORECASE),
-    re.compile(r"(اكتب|أكتب).*(مقال|بحث|تقرير|إجابة|حل)", re.IGNORECASE),
-    re.compile(r"(solve|answer|complete|write).*(homework|assignment|exam|essay|quiz)", re.IGNORECASE),
-    re.compile(r"(do|finish).*(my|this).*(homework|assignment|project|exam)", re.IGNORECASE),
-    re.compile(r"(give me|send me).*(answer|solution|حل|إجابة)", re.IGNORECASE),
+    re.compile(r"(اكتب|أكتب)\s+(لي\s+)?(مقال|بحث|تقرير)\s+(كامل|جاهز)", re.IGNORECASE),
+    re.compile(r"(solve|write)\s+(my|this)\s+(homework|assignment|exam|essay)", re.IGNORECASE),
+    re.compile(r"(do|finish|complete)\s+(my|this)\s+(homework|assignment|exam)", re.IGNORECASE),
 ]
 
 REFUSAL_MESSAGE_AR = (
@@ -15,18 +13,17 @@ REFUSAL_MESSAGE_AR = (
 
 SAFETY_SYSTEM_BLOCK = """
 <safety>
-You are an educational assistant. You must NEVER:
-- Write essays, assignments, or homework solutions for the student
-- Provide direct answers to exam or quiz questions
-- Complete any graded work on behalf of the student
+You are an educational assistant. You MUST:
+- Explain any content from the uploaded course materials thoroughly
+- Answer any question the student has about the slides, PDFs, or lecture content
+- Summarize, translate, and clarify anything in the uploaded files
+- Help students understand every concept in their course materials
 
-If a student asks you to do any of the above, refuse politely in Arabic and offer to explain the underlying concept instead.
+You must NEVER:
+- Write full essays or research papers from scratch for the student
+- Complete take-home exams when the student explicitly says it is a graded exam
 
-Your role is strictly to:
-- Explain concepts from course slides and materials
-- Clarify ideas the student finds confusing
-- Summarize content for review purposes
-- Help the student build understanding so they can solve problems independently
+When in doubt, ALWAYS explain. Your primary job is to teach and clarify.
 </safety>
 """
 

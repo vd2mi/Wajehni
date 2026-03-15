@@ -1,0 +1,37 @@
+[
+  {
+    "course_id": "CS101",
+    "title": "Introduction to Programming",
+    "title_ar": "مقدمة في البرمجة",
+    "major": "Computer Science",
+    "files": ["intro_to_programming.pdf"]
+  },
+  {
+    "course_id": "CS201",
+    "title": "Data Structures",
+    "title_ar": "هياكل البيانات",
+    "major": "Computer Science",
+    "files": ["data_structures.pdf"]
+  },
+  {
+    "course_id": "MATH101",
+    "title": "Calculus I",
+    "title_ar": "التفاضل والتكامل ١",
+    "major": "Mathematics",
+    "files": ["calculus_1.pdf"]
+  },
+  {
+    "course_id": "PHYS101",
+    "title": "General Physics",
+    "title_ar": "الفيزياء العامة",
+    "major": "Physics",
+    "files": ["general_physics.pdf"]
+  },
+  {
+    "course_id": "ENG101",
+    "title": "Technical Writing",
+    "title_ar": "الكتابة التقنية",
+    "major": "General",
+    "files": ["technical_writing.pdf"]
+  }
+]

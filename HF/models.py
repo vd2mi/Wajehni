@@ -17,6 +17,9 @@ class ChatMessage(BaseModel):
 class ExplainRequest(BaseModel):
     course_id: str
     question: str
+    language: str = "ar"
+    page_number: int | None = None
+    filename: str | None = None
     history: list[ChatMessage] = Field(default_factory=list)
 
 

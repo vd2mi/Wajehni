@@ -52,11 +52,17 @@ export function getCourses(): Promise<Course[]> {
 export function explainQuestion(
   course_id: string,
   question: string,
-  history: ChatMessage[] = []
+  history: ChatMessage[] = [],
+  language: string = "ar",
+  page_number?: number,
+  filename?: string
 ): Promise<ExplainResponse> {
+  const body: Record<string, unknown> = { course_id, question, history, language };
+  if (page_number !== undefined) body.page_number = page_number;
+  if (filename) body.filename = filename;
   return request<ExplainResponse>("/explain", {
     method: "POST",
-    body: JSON.stringify({ course_id, question, history }),
+    body: JSON.stringify(body),
   });
 }
 

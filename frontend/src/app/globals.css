@@ -5,47 +5,47 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --foreground: 0 0% 6%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card-foreground: 0 0% 6%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
+    --popover-foreground: 0 0% 6%;
     --primary: 0 0% 9%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
+    --secondary: 0 0% 96%;
     --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 44%;
+    --accent: 0 0% 96%;
     --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 0% 6%;
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 0 0% 6%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
+    --background: 0 0% 4%;
+    --foreground: 0 0% 96%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 96%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 0 0% 96%;
     --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 64%;
-    --accent: 0 0% 15%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --secondary: 0 0% 13%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 0 0% 13%;
+    --muted-foreground: 0 0% 56%;
+    --accent: 0 0% 13%;
+    --accent-foreground: 0 0% 96%;
+    --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 18%;
-    --input: 0 0% 18%;
-    --ring: 0 0% 83.1%;
+    --border: 0 0% 16%;
+    --input: 0 0% 16%;
+    --ring: 0 0% 83%;
   }
 
   * {
@@ -62,23 +62,49 @@
 }
 
 .markdown-body h1 {
-  @apply text-2xl font-bold mb-4 mt-6;
+  @apply text-xl font-bold mb-3 mt-5;
 }
 .markdown-body h2 {
-  @apply text-xl font-semibold mb-3 mt-5;
+  @apply text-lg font-semibold mb-2.5 mt-4;
 }
 .markdown-body h3 {
-  @apply text-lg font-medium mb-2 mt-4;
+  @apply text-base font-medium mb-2 mt-3;
 }
 .markdown-body p {
-  @apply mb-3 leading-relaxed;
+  @apply mb-2.5 leading-relaxed;
 }
 .markdown-body ul {
-  @apply list-disc pr-6 mb-3;
+  @apply list-disc pr-5 mb-2.5;
 }
 .markdown-body ol {
-  @apply list-decimal pr-6 mb-3;
+  @apply list-decimal pr-5 mb-2.5;
 }
 .markdown-body li {
   @apply mb-1;
+}
+.markdown-body code {
+  @apply bg-muted px-1.5 py-0.5 rounded text-[0.85em];
+}
+.markdown-body pre {
+  @apply bg-muted rounded-md p-3 mb-3 overflow-x-auto;
+}
+.markdown-body pre code {
+  @apply bg-transparent p-0;
+}
+.markdown-body strong {
+  @apply font-semibold;
+}
+.markdown-body table {
+  @apply w-full border-collapse mb-3;
+}
+.markdown-body th,
+.markdown-body td {
+  @apply border border-border px-3 py-1.5 text-sm;
+}
+.markdown-body th {
+  @apply bg-muted font-medium;
+}
+
+.react-pdf__Page__canvas {
+  @apply rounded shadow-sm;
 }

@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="ar" dir="rtl" className={ibmArabic.variable}>
       <body className="font-arabic antialiased bg-background text-foreground min-h-screen">
         <Navbar />
-        <main className="pt-14">{children}</main>
+        <main className="pt-16">{children}</main>
       </body>
     </html>
   );
