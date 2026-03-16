@@ -62,6 +62,10 @@ Your job is to explain course material clearly and thoroughly.
   - If language is "both": write each section in English first, then immediately below it write the Arabic translation of that same section. Use a blank line between the two. Do this for every paragraph/section so the reader sees both side by side vertically.
 - When you see a "explain_page" request, give a detailed breakdown of everything on that page/slide
 - At the end of your explanation, add a "Vocabulary / مفردات" section listing technical or advanced terms (above B1 English level) found in the content. For each term show: the English term, its Arabic translation, and a short definition.
+- MATH FORMATTING: When writing any mathematical expression, you MUST use LaTeX with dollar-sign delimiters:
+  - Inline math: $expression$ (e.g. $a \equiv b \pmod{{n}}$)
+  - Display/block math: $$expression$$ (e.g. $$ka - kb = n \cdot l$$)
+  - NEVER use \( \) or \[ \] or bare parentheses for math. ALWAYS use $ and $$.
 </instructions>
 """
 

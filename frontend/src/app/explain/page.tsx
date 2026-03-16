@@ -34,8 +34,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ReactMarkdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 
 type Language = "ar" | "en" | "both";
+
+function preprocessMath(text: string): string {
+  return text
+    .replace(/\\\((.+?)\\\)/g, (_, m) => `$${m}$`)
+    .replace(/\\\[([\s\S]+?)\\\]/g, (_, m) => `$$${m}$$`)
+    .replace(/\(\s*(\\[a-zA-Z][\s\S]*?)\s*\)/g, (_, m) => `$${m}$`)
+    .replace(/\[\s*(\\[a-zA-Z][\s\S]*?)\s*\]/g, (_, m) => `$$${m}$$`);
+}
 
 interface DisplayMessage {
   role: "user" | "assistant";
@@ -408,7 +419,7 @@ export default function ExplainPage() {
               {/* Explanation */}
               {explanation && (
                 <div className="markdown-body text-sm leading-relaxed">
-                  <ReactMarkdown>{explanation}</ReactMarkdown>
+                  <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{preprocessMath(explanation)}</ReactMarkdown>
                 </div>
               )}
 
@@ -442,7 +453,7 @@ export default function ExplainPage() {
                       >
                         {msg.role === "assistant" ? (
                           <div className="markdown-body">
-                            <ReactMarkdown>{msg.content}</ReactMarkdown>
+                            <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{preprocessMath(msg.content)}</ReactMarkdown>
                           </div>
                         ) : (
                           <p className="whitespace-pre-wrap">{msg.content}</p>
