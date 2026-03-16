@@ -62,6 +62,7 @@ export default function ExplainPage() {
 
   const [explanation, setExplanation] = useState("");
   const [explaining, setExplaining] = useState(false);
+  const [quizzing, setQuizzing] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [chatMessages, setChatMessages] = useState<DisplayMessage[]>([]);
@@ -150,12 +151,44 @@ export default function ExplainPage() {
     }
   }
 
-  function handleAskAboutPage() {
+  async function handleQuizPage(pageNum: number) {
+    if (!activeCourseId || !fileName) return;
+    setQuizzing(true);
+    setExplanation("");
+    setChatMessages([]);
+    setChatHistory([]);
     if (contentScrollRef.current) {
-      contentScrollRef.current.scrollTop =
-        contentScrollRef.current.scrollHeight;
+      contentScrollRef.current.scrollTop = 0;
     }
-    setTimeout(() => chatInputRef.current?.focus(), 100);
+    try {
+      const prompt =
+        language === "ar"
+          ? `أنشئ 5 أسئلة تدريبية من محتوى الصفحة ${pageNum} لاختبار فهم الطالب. اكتب السؤال ثم اترك سطر فارغ قبل الإجابة. ضع الإجابة تحت كل سؤال بعنوان "الإجابة:".`
+          : language === "en"
+            ? `Generate 5 practice questions from the content of page ${pageNum} to test the student's understanding. Write each question, leave a blank line, then provide the answer under "Answer:".`
+            : `Generate 5 practice questions from the content of page ${pageNum} to test the student's understanding. Write each question in English first, then in Arabic. Provide answers in both languages under each question.`;
+      const response = await explainQuestion(
+        activeCourseId,
+        prompt,
+        [],
+        language,
+        pageNum,
+        fileName
+      );
+      setExplanation(response.answer);
+      setChatHistory([
+        { role: "user", content: prompt },
+        { role: "assistant", content: response.answer },
+      ]);
+    } catch {
+      setExplanation(
+        language === "ar"
+          ? "حدث خطأ أثناء إنشاء الأسئلة."
+          : "An error occurred while generating questions."
+      );
+    } finally {
+      setQuizzing(false);
+    }
   }
 
   async function handleChatSend() {
@@ -350,8 +383,9 @@ export default function ExplainPage() {
             currentPage={currentPage}
             onPageChange={setCurrentPage}
             onExplainPage={handleExplainPage}
-            onAskAboutPage={() => handleAskAboutPage()}
+            onQuizPage={handleQuizPage}
             explaining={explaining}
+            quizzing={quizzing}
           />
         </div>
 

@@ -8,7 +8,7 @@ import {
   ChevronRight,
   ChevronLeft,
   Lightbulb,
-  MessageCircle,
+  HelpCircle,
   Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,8 +20,9 @@ interface PdfViewerProps {
   currentPage: number;
   onPageChange: (page: number) => void;
   onExplainPage: (pageNumber: number) => void;
-  onAskAboutPage: (pageNumber: number) => void;
+  onQuizPage: (pageNumber: number) => void;
   explaining: boolean;
+  quizzing: boolean;
 }
 
 export function PdfViewer({
@@ -29,12 +30,15 @@ export function PdfViewer({
   currentPage,
   onPageChange,
   onExplainPage,
-  onAskAboutPage,
+  onQuizPage,
   explaining,
+  quizzing,
 }: PdfViewerProps) {
   const [numPages, setNumPages] = useState(0);
   const [containerWidth, setContainerWidth] = useState(500);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const busy = explaining || quizzing;
 
   const updateWidth = useCallback(() => {
     if (containerRef.current) {
@@ -105,16 +109,21 @@ export function PdfViewer({
               variant="outline"
               size="sm"
               className="h-8 gap-1.5 text-xs"
-              onClick={() => onAskAboutPage(currentPage)}
+              onClick={() => onQuizPage(currentPage)}
+              disabled={busy}
             >
-              <MessageCircle className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">اسأل</span>
+              {quizzing ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <HelpCircle className="h-3.5 w-3.5" />
+              )}
+              <span className="hidden sm:inline">اختبرني</span>
             </Button>
             <Button
               size="sm"
               className="h-8 gap-1.5 text-xs"
               onClick={() => onExplainPage(currentPage)}
-              disabled={explaining}
+              disabled={busy}
             >
               {explaining ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
