@@ -55,9 +55,11 @@ export function explainQuestion(
   history: ChatMessage[] = [],
   language: string = "ar",
   page_number?: number,
-  filename?: string
+  filename?: string,
+  depth: "brief" | "detailed" = "detailed",
+  mode: "explain" | "translate" = "explain"
 ): Promise<ExplainResponse> {
-  const body: Record<string, unknown> = { course_id, question, history, language };
+  const body: Record<string, unknown> = { course_id, question, history, language, depth, mode };
   if (page_number !== undefined) body.page_number = page_number;
   if (filename) body.filename = filename;
   return request<ExplainResponse>("/explain", {

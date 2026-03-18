@@ -43,31 +43,78 @@ logger = logging.getLogger("wajehni")
 DATA_DIR = Path(__file__).resolve().parent / "data"
 COURSES_PATH = DATA_DIR / "courses.json"
 
-EXPLAIN_SYSTEM_PROMPT = f"""
+EXPLAIN_SYSTEM_BASE = f"""
 {SAFETY_SYSTEM_BLOCK}
 <role>
 You are an educational assistant called Wajehni (وجهني).
 Your job is to explain course material clearly and thoroughly.
 </role>
+"""
 
+MATH_INSTRUCTIONS = """
+- MATH FORMATTING: When writing any mathematical expression, you MUST use LaTeX with dollar-sign delimiters:
+  - Inline math: $expression$ (e.g. $a \\equiv b \\pmod{n}$)
+  - Display/block math: $$expression$$ (e.g. $$ka - kb = n \\cdot l$$)
+  - NEVER use \\( \\) or \\[ \\] or bare parentheses for math. ALWAYS use $ and $$.
+"""
+
+LANG_INSTRUCTIONS = """
+- Respond in the language specified in the language tag:
+  - If language is "ar": respond entirely in Arabic
+  - If language is "en": respond entirely in English
+  - If language is "both": write each section in English first, then immediately below it write the Arabic translation of that same section. Use a blank line between the two. Do this for every paragraph/section so the reader sees both side by side vertically.
+"""
+
+DEPTH_INSTRUCTIONS = {
+    "brief": """
+<instructions>
+- Read the provided context chunks carefully
+- Give a SHORT, high-level overview — hit the key points only
+- Keep it concise: a few paragraphs at most
+- Skip minor details; focus on the main idea and takeaways
+- Use bullet points for clarity when appropriate
+- You have access to conversation history — use it to understand follow-up questions
+{lang}
+{math}
+</instructions>
+""",
+    "detailed": """
 <instructions>
 - Read the provided context chunks carefully
 - Explain the content the student is asking about clearly and in detail
 - Use examples when helpful
 - Reference specific parts of the slides when relevant
 - You have access to conversation history — use it to understand follow-up questions
-- Respond in the language specified in the language tag:
-  - If language is "ar": respond entirely in Arabic
-  - If language is "en": respond entirely in English
-  - If language is "both": write each section in English first, then immediately below it write the Arabic translation of that same section. Use a blank line between the two. Do this for every paragraph/section so the reader sees both side by side vertically.
+{lang}
 - When you see a "explain_page" request, give a detailed breakdown of everything on that page/slide
 - At the end of your explanation, add a "Vocabulary / مفردات" section listing technical or advanced terms (above B1 English level) found in the content. For each term show: the English term, its Arabic translation, and a short definition.
-- MATH FORMATTING: When writing any mathematical expression, you MUST use LaTeX with dollar-sign delimiters:
-  - Inline math: $expression$ (e.g. $a \equiv b \pmod{{n}}$)
-  - Display/block math: $$expression$$ (e.g. $$ka - kb = n \cdot l$$)
-  - NEVER use \( \) or \[ \] or bare parentheses for math. ALWAYS use $ and $$.
+{math}
+</instructions>
+""",
+}
+
+TRANSLATE_INSTRUCTIONS = """
+<instructions>
+- Read the provided context chunks carefully
+- Translate the content faithfully and completely
+- If the source is in English, translate to Arabic
+- If the source is in Arabic, translate to English
+- Preserve structure: headings stay headings, lists stay lists
+- Keep technical terms accurate — add the original term in parentheses where helpful
+- Do NOT summarize or skip content; translate everything on the page
+- You have access to conversation history — use it to understand follow-up questions
+{math}
 </instructions>
 """
+
+
+def build_system_prompt(mode: str = "explain", depth: str = "detailed") -> str:
+    if mode == "translate":
+        instructions = TRANSLATE_INSTRUCTIONS.format(math=MATH_INSTRUCTIONS)
+    else:
+        template = DEPTH_INSTRUCTIONS.get(depth, DEPTH_INSTRUCTIONS["detailed"])
+        instructions = template.format(lang=LANG_INSTRUCTIONS, math=MATH_INSTRUCTIONS)
+    return EXPLAIN_SYSTEM_BASE + instructions
 
 courses_db: list[CourseFile] = []
 openai_client: OpenAI | None = None
@@ -177,8 +224,13 @@ async def explain(request: ExplainRequest):
         context_xml = engine.build_context_xml(chunks)
         source_ids = [c.chunk_id for c in chunks]
 
+    system_prompt = build_system_prompt(
+        mode=request.mode,
+        depth=request.depth,
+    )
+
     messages: list[dict[str, str]] = [
-        {"role": "system", "content": EXPLAIN_SYSTEM_PROMPT},
+        {"role": "system", "content": system_prompt},
     ]
 
     if request.history:

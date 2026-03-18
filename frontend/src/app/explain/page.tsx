@@ -19,6 +19,8 @@ const PdfViewer = dynamic(
     ),
   }
 );
+
+import type { ExplainAction } from "@/components/pdf-viewer";
 import {
   getCourses,
   explainQuestion,
@@ -122,7 +124,7 @@ export default function ExplainPage() {
     [activeCourseId]
   );
 
-  async function handleExplainPage(pageNum: number) {
+  async function handleExplainPage(pageNum: number, action: ExplainAction) {
     if (!activeCourseId || !fileName) return;
     setExplaining(true);
     setExplanation("");
@@ -131,20 +133,42 @@ export default function ExplainPage() {
     if (contentScrollRef.current) {
       contentScrollRef.current.scrollTop = 0;
     }
-    try {
-      const prompt =
+
+    const mode = action.kind === "translate" ? "translate" as const : "explain" as const;
+    const depth = action.kind === "explain" ? action.depth : "detailed" as const;
+
+    let prompt: string;
+    if (action.kind === "translate") {
+      prompt =
+        language === "ar"
+          ? `ترجم محتوى الصفحة ${pageNum}`
+          : `Translate the content of page ${pageNum}`;
+    } else if (depth === "brief") {
+      prompt =
+        language === "ar"
+          ? `اشرح محتوى الصفحة ${pageNum} بشكل مختصر`
+          : language === "en"
+            ? `Give a brief overview of page ${pageNum}`
+            : `Give a brief overview of page ${pageNum}, with Arabic translation`;
+    } else {
+      prompt =
         language === "ar"
           ? `اشرح محتوى الصفحة ${pageNum} بالتفصيل`
           : language === "en"
             ? `Explain the content of page ${pageNum} in detail`
             : `Explain the content of page ${pageNum} in detail, with Arabic translation`;
+    }
+
+    try {
       const response = await explainQuestion(
         activeCourseId,
         prompt,
         [],
         language,
         pageNum,
-        fileName
+        fileName,
+        depth,
+        mode,
       );
       setExplanation(response.answer);
       setChatHistory([
@@ -393,7 +417,7 @@ export default function ExplainPage() {
             fileUrl={pdfUrl}
             currentPage={currentPage}
             onPageChange={setCurrentPage}
-            onExplainPage={handleExplainPage}
+            onExplainPage={(page, action) => handleExplainPage(page, action)}
             onQuizPage={handleQuizPage}
             explaining={explaining}
             quizzing={quizzing}
@@ -428,8 +452,8 @@ export default function ExplainPage() {
                 <div className="py-12 text-center">
                   <p className="text-sm text-muted-foreground">
                     {language === "en"
-                      ? 'Press "اشرح" to explain the current page, or "اسأل" to ask a question.'
-                      : 'اضغط "اشرح" لشرح الصفحة، أو "اسأل" لطرح سؤال.'}
+                      ? 'Use the "اشرح" menu to explain or translate, or type a question below.'
+                      : 'استخدم قائمة "اشرح" للشرح أو الترجمة، أو اكتب سؤالك أدناه.'}
                   </p>
                 </div>
               )}

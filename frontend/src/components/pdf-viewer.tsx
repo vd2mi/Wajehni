@@ -7,19 +7,34 @@ import "react-pdf/dist/Page/TextLayer.css";
 import {
   ChevronRight,
   ChevronLeft,
+  ChevronDown,
   Lightbulb,
   HelpCircle,
   Loader2,
+  Languages,
+  Zap,
+  BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+
+export type ExplainAction =
+  | { kind: "explain"; depth: "brief" | "detailed" }
+  | { kind: "translate" };
 
 interface PdfViewerProps {
   fileUrl: string;
   currentPage: number;
   onPageChange: (page: number) => void;
-  onExplainPage: (pageNumber: number) => void;
+  onExplainPage: (pageNumber: number, action: ExplainAction) => void;
   onQuizPage: (pageNumber: number) => void;
   explaining: boolean;
   quizzing: boolean;
@@ -78,7 +93,6 @@ export function PdfViewer({
 
       <div className="border-t bg-background px-3 py-2.5 shrink-0">
         <div className="flex items-center justify-between gap-2">
-          {/* Page navigation */}
           <div className="flex items-center gap-1.5">
             <Button
               variant="ghost"
@@ -103,7 +117,6 @@ export function PdfViewer({
             </Button>
           </div>
 
-          {/* Action buttons */}
           <div className="flex items-center gap-1.5">
             <Button
               variant="outline"
@@ -119,19 +132,47 @@ export function PdfViewer({
               )}
               <span className="hidden sm:inline">اختبرني</span>
             </Button>
-            <Button
-              size="sm"
-              className="h-8 gap-1.5 text-xs"
-              onClick={() => onExplainPage(currentPage)}
-              disabled={busy}
-            >
-              {explaining ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <Lightbulb className="h-3.5 w-3.5" />
-              )}
-              <span className="hidden sm:inline">اشرح</span>
-            </Button>
+
+            <DropdownMenu dir="rtl">
+              <DropdownMenuTrigger asChild disabled={busy}>
+                <Button size="sm" className="h-8 gap-1 text-xs">
+                  {explaining ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Lightbulb className="h-3.5 w-3.5" />
+                  )}
+                  <span className="hidden sm:inline">اشرح</span>
+                  <ChevronDown className="h-3 w-3 opacity-60" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-[10rem]">
+                <DropdownMenuItem
+                  onClick={() =>
+                    onExplainPage(currentPage, { kind: "explain", depth: "brief" })
+                  }
+                >
+                  <Zap className="h-4 w-4" />
+                  شرح مختصر
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() =>
+                    onExplainPage(currentPage, { kind: "explain", depth: "detailed" })
+                  }
+                >
+                  <BookOpen className="h-4 w-4" />
+                  شرح تفصيلي
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() =>
+                    onExplainPage(currentPage, { kind: "translate" })
+                  }
+                >
+                  <Languages className="h-4 w-4" />
+                  ترجم الصفحة
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>

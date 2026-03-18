@@ -21,6 +21,8 @@ class ExplainRequest(BaseModel):
     page_number: int | None = None
     filename: str | None = None
     history: list[ChatMessage] = Field(default_factory=list)
+    depth: str = "detailed"
+    mode: str = "explain"
 
 
 class ExplainResponse(BaseModel):
