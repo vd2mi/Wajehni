@@ -1,0 +1,636 @@
+{
+  "regions": [
+    {
+      "id": "SA-04",
+      "name_ar": "المنطقة الشرقية",
+      "name_en": "Eastern Province",
+      "universities": [
+        {
+          "id": "iau",
+          "name_ar": "جامعة الإمام عبدالرحمن بن فيصل",
+          "name_en": "Imam Abdulrahman Bin Faisal University",
+          "city_ar": "الدمام",
+          "lat": 26.398,
+          "lng": 50.196,
+          "colleges": [
+            {
+              "id": "medicine",
+              "name_ar": "كلية الطب",
+              "name_en": "College of Medicine",
+              "track_ar": "المسار الصحي",
+              "track_en": "Health Track",
+              "majors": [
+                {
+                  "id": "mbbs",
+                  "name_ar": "الطب والجراحة",
+                  "name_en": "Medicine and Surgery (MBBS)",
+                  "courses": []
+                }
+              ]
+            },
+            {
+              "id": "dentistry",
+              "name_ar": "كلية طب الأسنان",
+              "name_en": "College of Dentistry",
+              "track_ar": "المسار الصحي",
+              "track_en": "Health Track",
+              "majors": [
+                {
+                  "id": "bds",
+                  "name_ar": "طب الأسنان",
+                  "name_en": "Dental Surgery (BDS)",
+                  "courses": []
+                }
+              ]
+            },
+            {
+              "id": "clinical-pharmacy",
+              "name_ar": "كلية الصيدلة الإكلينيكية",
+              "name_en": "College of Clinical Pharmacy",
+              "track_ar": "المسار الصحي",
+              "track_en": "Health Track",
+              "majors": [
+                {
+                  "id": "pharmd",
+                  "name_ar": "دكتور صيدلة",
+                  "name_en": "Doctor of Pharmacy (PharmD)",
+                  "courses": []
+                }
+              ]
+            },
+            {
+              "id": "nursing",
+              "name_ar": "كلية التمريض",
+              "name_en": "College of Nursing",
+              "track_ar": "المسار الصحي",
+              "track_en": "Health Track",
+              "majors": [
+                {
+                  "id": "nursing",
+                  "name_ar": "التمريض",
+                  "name_en": "Nursing",
+                  "courses": []
+                }
+              ]
+            },
+            {
+              "id": "applied-medical-sciences",
+              "name_ar": "كلية العلوم الطبية التطبيقية",
+              "name_en": "College of Applied Medical Sciences",
+              "track_ar": "المسار الصحي",
+              "track_en": "Health Track",
+              "majors": [
+                {
+                  "id": "respiratory-care",
+                  "name_ar": "الرعاية التنفسية",
+                  "name_en": "Respiratory Care",
+                  "courses": []
+                },
+                {
+                  "id": "physical-therapy",
+                  "name_ar": "العلاج الطبيعي",
+                  "name_en": "Physical Therapy",
+                  "courses": []
+                },
+                {
+                  "id": "radiological-sciences",
+                  "name_ar": "العلوم الإشعاعية",
+                  "name_en": "Radiological Sciences",
+                  "courses": []
+                },
+                {
+                  "id": "clinical-laboratory-sciences",
+                  "name_ar": "علوم المختبرات الإكلينيكية",
+                  "name_en": "Clinical Laboratory Sciences",
+                  "courses": []
+                },
+                {
+                  "id": "cardiac-technology",
+                  "name_ar": "تقنية القلب",
+                  "name_en": "Cardiac Technology",
+                  "courses": []
+                }
+              ]
+            },
+            {
+              "id": "public-health",
+              "name_ar": "كلية الصحة العامة",
+              "name_en": "College of Public Health",
+              "track_ar": "المسار الصحي",
+              "track_en": "Health Track",
+              "majors": [
+                {
+                  "id": "public-health",
+                  "name_ar": "الصحة العامة",
+                  "name_en": "Public Health",
+                  "courses": []
+                },
+                {
+                  "id": "occupational-health-safety",
+                  "name_ar": "الصحة والسلامة المهنية",
+                  "name_en": "Occupational Health and Safety",
+                  "courses": []
+                },
+                {
+                  "id": "clinical-psychology",
+                  "name_ar": "علم النفس الإكلينيكي",
+                  "name_en": "Clinical Psychology",
+                  "courses": []
+                }
+              ]
+            },
+            {
+              "id": "applied-medical-sciences-jubail",
+              "name_ar": "كلية العلوم الطبية التطبيقية بالجبيل",
+              "name_en": "College of Applied Medical Sciences – Jubail",
+              "track_ar": "المسار الصحي",
+              "track_en": "Health Track",
+              "majors": [
+                {
+                  "id": "nursing-jubail",
+                  "name_ar": "التمريض",
+                  "name_en": "Nursing",
+                  "courses": []
+                },
+                {
+                  "id": "clinical-laboratory-sciences-jubail",
+                  "name_ar": "علوم المختبرات الطبية",
+                  "name_en": "Medical Laboratory Sciences",
+                  "courses": []
+                }
+              ]
+            },
+            {
+              "id": "engineering",
+              "name_ar": "كلية الهندسة",
+              "name_en": "College of Engineering",
+              "track_ar": "مسار الهندسة والتصميم",
+              "track_en": "Engineering & Design Track",
+              "majors": [
+                {
+                  "id": "biomedical-engineering",
+                  "name_ar": "الهندسة الطبية الحيوية",
+                  "name_en": "Biomedical Engineering",
+                  "courses": []
+                },
+                {
+                  "id": "environmental-engineering",
+                  "name_ar": "الهندسة البيئية",
+                  "name_en": "Environmental Engineering",
+                  "courses": []
+                },
+                {
+                  "id": "mechanical-energy-engineering",
+                  "name_ar": "الهندسة الميكانيكية وهندسة الطاقة",
+                  "name_en": "Mechanical and Energy Engineering",
+                  "courses": []
+                },
+                {
+                  "id": "chemical-engineering",
+                  "name_ar": "الهندسة الكيميائية",
+                  "name_en": "Chemical Engineering",
+                  "courses": []
+                },
+                {
+                  "id": "civil-infrastructure-engineering",
+                  "name_ar": "الهندسة المدنية والبنية التحتية",
+                  "name_en": "Civil and Infrastructure Engineering",
+                  "courses": []
+                },
+                {
+                  "id": "transport-traffic-engineering",
+                  "name_ar": "هندسة النقل والمرور",
+                  "name_en": "Transport and Traffic Engineering",
+                  "courses": []
+                }
+              ]
+            },
+            {
+              "id": "architecture-planning",
+              "name_ar": "كلية العمارة والتخطيط",
+              "name_en": "College of Architecture and Planning",
+              "track_ar": "مسار الهندسة والتصميم",
+              "track_en": "Engineering & Design Track",
+              "majors": [
+                {
+                  "id": "architecture",
+                  "name_ar": "العمارة",
+                  "name_en": "Architecture",
+                  "courses": []
+                },
+                {
+                  "id": "building-engineering",
+                  "name_ar": "هندسة البناء",
+                  "name_en": "Building Engineering",
+                  "courses": []
+                },
+                {
+                  "id": "interior-architecture",
+                  "name_ar": "العمارة الداخلية",
+                  "name_en": "Interior Architecture",
+                  "courses": []
+                },
+                {
+                  "id": "landscape-architecture",
+                  "name_ar": "عمارة البيئة",
+                  "name_en": "Landscape Architecture",
+                  "courses": []
+                },
+                {
+                  "id": "urban-regional-planning",
+                  "name_ar": "التخطيط الحضري والإقليمي",
+                  "name_en": "Urban and Regional Planning",
+                  "courses": []
+                }
+              ]
+            },
+            {
+              "id": "design",
+              "name_ar": "كلية التصاميم",
+              "name_en": "College of Design",
+              "track_ar": "مسار الهندسة والتصميم",
+              "track_en": "Engineering & Design Track",
+              "majors": [
+                {
+                  "id": "interior-design",
+                  "name_ar": "التصميم الداخلي",
+                  "name_en": "Interior Design",
+                  "courses": []
+                },
+                {
+                  "id": "graphic-design",
+                  "name_ar": "تصميم الجرافيك",
+                  "name_en": "Graphic Design",
+                  "courses": []
+                },
+                {
+                  "id": "industrial-design",
+                  "name_ar": "التصميم الصناعي",
+                  "name_en": "Industrial Design",
+                  "courses": []
+                }
+              ]
+            },
+            {
+              "id": "ccsit",
+              "name_ar": "كلية علوم الحاسب وتقنية المعلومات",
+              "name_en": "College of Computer Science and Information Technology",
+              "track_ar": "مسار العلوم والإدارة",
+              "track_en": "Sciences & Management Track",
+              "majors": [
+                {
+                  "id": "cs",
+                  "name_ar": "علوم الحاسب",
+                  "name_en": "Computer Science",
+                  "courses": [
+                    {
+                      "course_id": "NA_test",
+                      "code": "CS 351",
+                      "title": "Numerical Analysis",
+                      "title_ar": "التحليل العددي",
+                      "level": 5,
+                      "files": ["Slides/Chapter1.pptx"],
+                      "folders": {
+                        "Slides": 1,
+                        "FormulaSheets": 0,
+                        "OldQuiz": 0,
+                        "videos": 0
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "information-systems",
+                  "name_ar": "نظم المعلومات",
+                  "name_en": "Information Systems",
+                  "courses": []
+                },
+                {
+                  "id": "cybersecurity",
+                  "name_ar": "الأمن السيبراني والأدلة الجنائية الرقمية",
+                  "name_en": "Cyber Security and Digital Forensics",
+                  "courses": []
+                },
+                {
+                  "id": "artificial-intelligence",
+                  "name_ar": "الذكاء الاصطناعي",
+                  "name_en": "Artificial Intelligence",
+                  "courses": []
+                }
+              ]
+            },
+            {
+              "id": "business-administration",
+              "name_ar": "كلية إدارة الأعمال",
+              "name_en": "College of Business Administration",
+              "track_ar": "مسار العلوم والإدارة",
+              "track_en": "Sciences & Management Track",
+              "majors": [
+                {
+                  "id": "accounting",
+                  "name_ar": "المحاسبة",
+                  "name_en": "Accounting",
+                  "courses": []
+                },
+                {
+                  "id": "finance",
+                  "name_ar": "المالية",
+                  "name_en": "Finance",
+                  "courses": []
+                },
+                {
+                  "id": "banking-finance",
+                  "name_ar": "المصرفية والتمويل",
+                  "name_en": "Banking and Finance",
+                  "courses": []
+                },
+                {
+                  "id": "mis",
+                  "name_ar": "نظم المعلومات الإدارية",
+                  "name_en": "Management Information Systems (MIS)",
+                  "courses": []
+                },
+                {
+                  "id": "risk-management",
+                  "name_ar": "إدارة المخاطر",
+                  "name_en": "Risk Management",
+                  "courses": []
+                },
+                {
+                  "id": "marketing",
+                  "name_ar": "التسويق",
+                  "name_en": "Marketing",
+                  "courses": []
+                }
+              ]
+            },
+            {
+              "id": "science",
+              "name_ar": "كلية العلوم",
+              "name_en": "College of Science",
+              "track_ar": "مسار العلوم والإدارة",
+              "track_en": "Sciences & Management Track",
+              "majors": [
+                {
+                  "id": "biology",
+                  "name_ar": "الأحياء",
+                  "name_en": "Biology",
+                  "courses": []
+                },
+                {
+                  "id": "chemistry",
+                  "name_ar": "الكيمياء",
+                  "name_en": "Chemistry",
+                  "courses": []
+                },
+                {
+                  "id": "physics",
+                  "name_ar": "الفيزياء",
+                  "name_en": "Physics",
+                  "courses": []
+                },
+                {
+                  "id": "mathematics",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "courses": []
+                },
+                {
+                  "id": "environmental-sciences",
+                  "name_ar": "علوم البيئة",
+                  "name_en": "Environmental Sciences",
+                  "courses": []
+                },
+                {
+                  "id": "statistics-data-science",
+                  "name_ar": "الإحصاء وعلم البيانات",
+                  "name_en": "Statistics and Data Science",
+                  "courses": []
+                }
+              ]
+            },
+            {
+              "id": "arts",
+              "name_ar": "كلية الآداب",
+              "name_en": "College of Arts",
+              "track_ar": "مسار الآداب والتربية",
+              "track_en": "Arts & Education Track",
+              "majors": [
+                {
+                  "id": "arabic-language",
+                  "name_ar": "اللغة العربية",
+                  "name_en": "Arabic Language",
+                  "courses": []
+                },
+                {
+                  "id": "english-language",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "courses": []
+                },
+                {
+                  "id": "history",
+                  "name_ar": "التاريخ",
+                  "name_en": "History",
+                  "courses": []
+                },
+                {
+                  "id": "geography-gis",
+                  "name_ar": "الجغرافيا ونظم المعلومات الجغرافية",
+                  "name_en": "Geography and Geographical Information Systems",
+                  "courses": []
+                },
+                {
+                  "id": "sociology",
+                  "name_ar": "علم الاجتماع",
+                  "name_en": "Sociology",
+                  "courses": []
+                },
+                {
+                  "id": "communication-it",
+                  "name_ar": "الاتصال وتقنية المعلومات",
+                  "name_en": "Communication and Information Technology",
+                  "courses": []
+                },
+                {
+                  "id": "information-science",
+                  "name_ar": "علم المعلومات",
+                  "name_en": "Information Science",
+                  "courses": []
+                }
+              ]
+            },
+            {
+              "id": "education",
+              "name_ar": "كلية التربية",
+              "name_en": "College of Education",
+              "track_ar": "مسار الآداب والتربية",
+              "track_en": "Arts & Education Track",
+              "majors": [
+                {
+                  "id": "early-childhood-education",
+                  "name_ar": "الطفولة المبكرة",
+                  "name_en": "Early Childhood Education",
+                  "courses": []
+                },
+                {
+                  "id": "special-education",
+                  "name_ar": "التربية الخاصة",
+                  "name_en": "Special Education",
+                  "courses": []
+                },
+                {
+                  "id": "counseling-psychology",
+                  "name_ar": "الإرشاد وعلم النفس",
+                  "name_en": "Counseling and Psychology",
+                  "courses": []
+                }
+              ]
+            },
+            {
+              "id": "sharia-law",
+              "name_ar": "كلية الشريعة والقانون",
+              "name_en": "College of Sharia and Law",
+              "track_ar": "مسار الآداب والتربية",
+              "track_en": "Arts & Education Track",
+              "majors": [
+                {
+                  "id": "sharia",
+                  "name_ar": "الشريعة",
+                  "name_en": "Sharia",
+                  "courses": []
+                },
+                {
+                  "id": "law",
+                  "name_ar": "القانون",
+                  "name_en": "Law",
+                  "courses": []
+                }
+              ]
+            },
+            {
+              "id": "science-humanities-jubail",
+              "name_ar": "كلية العلوم والدراسات الإنسانية بالجبيل",
+              "name_en": "College of Science and Humanities – Jubail",
+              "track_ar": "مسار الآداب والتربية",
+              "track_en": "Arts & Education Track",
+              "majors": [
+                {
+                  "id": "english-language-jubail",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "courses": []
+                },
+                {
+                  "id": "cs-jubail",
+                  "name_ar": "علوم الحاسب",
+                  "name_en": "Computer Science",
+                  "courses": []
+                },
+                {
+                  "id": "mathematics-jubail",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "courses": []
+                },
+                {
+                  "id": "physics-jubail",
+                  "name_ar": "الفيزياء",
+                  "name_en": "Physics",
+                  "courses": []
+                },
+                {
+                  "id": "kindergarten",
+                  "name_ar": "رياض الأطفال",
+                  "name_en": "Kindergarten",
+                  "courses": []
+                }
+              ]
+            },
+            {
+              "id": "applied-college",
+              "name_ar": "الكلية التطبيقية",
+              "name_en": "Applied College",
+              "track_ar": "الكليات التطبيقية وخدمة المجتمع",
+              "track_en": "Applied & Community Colleges",
+              "majors": [
+                {
+                  "id": "applied-vocational-programs",
+                  "name_ar": "البرامج المهنية والتقنية",
+                  "name_en": "Vocational and Technical Programs",
+                  "courses": []
+                }
+              ]
+            },
+            {
+              "id": "applied-studies-community-service",
+              "name_ar": "كلية الدراسات التطبيقية وخدمة المجتمع",
+              "name_en": "College of Applied Studies and Community Service",
+              "track_ar": "الكليات التطبيقية وخدمة المجتمع",
+              "track_en": "Applied & Community Colleges",
+              "majors": [
+                {
+                  "id": "cascs-business-administration",
+                  "name_ar": "إدارة الأعمال",
+                  "name_en": "Business Administration",
+                  "courses": []
+                },
+                {
+                  "id": "cascs-accounting",
+                  "name_ar": "المحاسبة",
+                  "name_en": "Accounting",
+                  "courses": []
+                },
+                {
+                  "id": "cascs-marketing",
+                  "name_ar": "التسويق",
+                  "name_en": "Marketing",
+                  "courses": []
+                },
+                {
+                  "id": "cascs-finance",
+                  "name_ar": "المالية",
+                  "name_en": "Finance",
+                  "courses": []
+                },
+                {
+                  "id": "cascs-mis",
+                  "name_ar": "نظم المعلومات الإدارية",
+                  "name_en": "Management Information Systems",
+                  "courses": []
+                }
+              ]
+            },
+            {
+              "id": "community-college",
+              "name_ar": "كلية المجتمع بالدمام / القطيف",
+              "name_en": "Community College – Dammam / Qatif",
+              "track_ar": "الكليات التطبيقية وخدمة المجتمع",
+              "track_en": "Applied & Community Colleges",
+              "majors": [
+                {
+                  "id": "computer-networking",
+                  "name_ar": "شبكات الحاسب",
+                  "name_en": "Computer Networking",
+                  "courses": []
+                },
+                {
+                  "id": "databases",
+                  "name_ar": "قواعد البيانات",
+                  "name_en": "Databases",
+                  "courses": []
+                },
+                {
+                  "id": "programming",
+                  "name_ar": "البرمجة",
+                  "name_en": "Programming",
+                  "courses": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

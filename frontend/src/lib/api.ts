@@ -45,6 +45,75 @@ export interface MajorAssistResponse {
   report_markdown: string;
 }
 
+export interface CatalogCourse {
+  course_id: string;
+  code: string;
+  title: string;
+  title_ar: string;
+  level: number;
+  files: string[];
+  /** Optional resource-folder breakdown, e.g. { Slides: 1, videos: 0 } */
+  folders?: Record<string, number>;
+}
+
+export interface CatalogMajor {
+  id: string;
+  name_ar: string;
+  name_en: string;
+  courses: CatalogCourse[];
+}
+
+export interface CatalogCollege {
+  id: string;
+  name_ar: string;
+  name_en: string;
+  track_ar?: string;
+  track_en?: string;
+  majors: CatalogMajor[];
+}
+
+export interface CatalogUniversity {
+  id: string;
+  name_ar: string;
+  name_en: string;
+  city_ar: string;
+  lat: number;
+  lng: number;
+  colleges: CatalogCollege[];
+}
+
+export interface CatalogRegion {
+  id: string;
+  name_ar: string;
+  name_en: string;
+  universities: CatalogUniversity[];
+}
+
+export interface Catalog {
+  regions: CatalogRegion[];
+}
+
+interface CatalogNodeRef {
+  id: string;
+  name_ar: string;
+  name_en: string;
+}
+
+export interface CatalogMajorDetail {
+  region: CatalogNodeRef;
+  university: CatalogNodeRef;
+  college: CatalogNodeRef;
+  major: CatalogMajor;
+}
+
+export function getCatalog(): Promise<Catalog> {
+  return request<Catalog>("/catalog");
+}
+
+export function getCatalogMajor(majorId: string): Promise<CatalogMajorDetail> {
+  return request<CatalogMajorDetail>(`/catalog/major/${encodeURIComponent(majorId)}`);
+}
+
 export function getCourses(): Promise<Course[]> {
   return request<Course[]>("/courses");
 }

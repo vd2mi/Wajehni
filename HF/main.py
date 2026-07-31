@@ -42,6 +42,7 @@ logger = logging.getLogger("wajehni")
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 COURSES_PATH = DATA_DIR / "courses.json"
+CATALOG_PATH = DATA_DIR / "catalog.json"
 
 EXPLAIN_SYSTEM_BASE = f"""
 {SAFETY_SYSTEM_BLOCK}
@@ -117,6 +118,7 @@ def build_system_prompt(mode: str = "explain", depth: str = "detailed") -> str:
     return EXPLAIN_SYSTEM_BASE + instructions
 
 courses_db: list[CourseFile] = []
+catalog_db: dict = {"regions": []}
 openai_client: OpenAI | None = None
 rag_engine: RAGEngine | None = None
 
@@ -130,9 +132,35 @@ def load_courses() -> list[CourseFile]:
     return [CourseFile(**entry) for entry in raw]
 
 
+def load_catalog() -> dict:
+    if not CATALOG_PATH.exists():
+        logger.warning("catalog.json not found at %s", CATALOG_PATH)
+        return {"regions": []}
+    with open(CATALOG_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def iter_catalog_majors():
+    """Yield (region, university, college, major) tuples from the catalog tree."""
+    for region in catalog_db.get("regions", []):
+        for university in region.get("universities", []):
+            for college in university.get("colleges", []):
+                for major in college.get("majors", []):
+                    yield region, university, college, major
+
+
+def catalog_course_ids() -> set[str]:
+    return {
+        course.get("course_id")
+        for _, _, _, major in iter_catalog_majors()
+        for course in major.get("courses", [])
+        if course.get("course_id")
+    }
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global courses_db, openai_client, rag_engine
+    global courses_db, catalog_db, openai_client, rag_engine
 
     api_key = os.getenv("OPENAI_API_KEY", "").strip()
     if not api_key:
@@ -142,8 +170,14 @@ async def lifespan(app: FastAPI):
     openai_client = OpenAI(api_key=api_key)
     rag_engine = RAGEngine(openai_client)
     courses_db = load_courses()
+    catalog_db = load_catalog()
 
     logger.info("Loaded %d courses", len(courses_db))
+    logger.info(
+        "Loaded catalog: %d majors across %d regions",
+        sum(1 for _ in iter_catalog_majors()),
+        len(catalog_db.get("regions", [])),
+    )
 
     for course in courses_db:
         indexed = rag_engine.index_course(course.course_id, course.files)
@@ -187,6 +221,25 @@ async def list_courses():
     return courses_db
 
 
+@app.get("/catalog")
+async def get_catalog():
+    return catalog_db
+
+
+@app.get("/catalog/major/{major_id}")
+async def get_catalog_major(major_id: str):
+    for region, university, college, major in iter_catalog_majors():
+        if major.get("id") == major_id:
+            slim = lambda node: {k: node.get(k) for k in ("id", "name_ar", "name_en")}
+            return {
+                "region": slim(region),
+                "university": slim(university),
+                "college": slim(college),
+                "major": major,
+            }
+    raise HTTPException(status_code=404, detail=f"Major {major_id} not found")
+
+
 @app.post("/explain", response_model=ExplainResponse)
 async def explain(request: ExplainRequest):
     blocked = check_blocked(request.question)
@@ -196,7 +249,11 @@ async def explain(request: ExplainRequest):
     engine = get_rag()
     client = get_openai()
 
-    course_exists = any(c.course_id == request.course_id for c in courses_db)
+    # catalog.json takes precedence; courses.json keeps the legacy flow working
+    course_exists = (
+        request.course_id in catalog_course_ids()
+        or any(c.course_id == request.course_id for c in courses_db)
+    )
     if not course_exists:
         raise HTTPException(status_code=404, detail=f"Course {request.course_id} not found")
 

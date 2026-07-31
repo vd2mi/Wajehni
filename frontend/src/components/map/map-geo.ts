@@ -38,15 +38,14 @@ export const REGION_BBOXES: Record<
 };
 
 /**
- * Transform that makes a region fill the viewport, expressed about the SVG
- * canvas origin: p' = (tx, ty) + scale * p.
- * "Cover" scaling: the region spans the viewport, cropping its overflow on
- * the long axis (for SA-04 that is empty desert at the north/south edges).
+ * Transform that zooms a region in, expressed about the SVG canvas origin:
+ * p' = (tx, ty) + scale * p.
+ * "Contain" scaling: the whole region stays fully in frame.
  */
-export function regionZoom(regionId: string, pad = 0.98) {
+export function regionZoom(regionId: string, pad = 0.95) {
   const b = REGION_BBOXES[regionId];
   if (!b) return null;
-  const scale = Math.max(MAP_WIDTH / b.w, MAP_HEIGHT / b.h) * pad;
+  const scale = Math.min(MAP_WIDTH / b.w, MAP_HEIGHT / b.h) * pad;
   return {
     scale,
     tx: MAP_WIDTH / 2 - scale * (b.x + b.w / 2),

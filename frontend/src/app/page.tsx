@@ -1,23 +1,37 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import { SaudiMap, REGIONS } from "@/components/map/saudi-map";
-import { UniversityPins } from "@/components/map/university-pins";
+import { UniversityPins, type UniversityPin } from "@/components/map/university-pins";
 import { Breadcrumbs, type Crumb } from "@/components/breadcrumbs";
+import { getCatalog, type Catalog } from "@/lib/api";
 import { t } from "@/lib/i18n";
 
-// Static for now — phase 3 replaces this with data from GET /catalog.
-const UNIVERSITIES = [
-  { id: "iau", name_ar: "جامعة الإمام عبدالرحمن بن فيصل", lat: 26.398, lng: 50.196 },
-];
+// Fallback when the backend is unreachable — mirrors catalog.json.
+const FALLBACK_UNIVERSITIES: Record<string, UniversityPin[]> = {
+  "SA-04": [
+    { id: "iau", name_ar: "جامعة الإمام عبدالرحمن بن فيصل", lat: 26.398, lng: 50.196 },
+  ],
+};
 
 function MapFlow() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const regionParam = searchParams.get("region");
   const zoomed = regionParam && REGIONS[regionParam]?.active ? regionParam : null;
+
+  const [catalog, setCatalog] = useState<Catalog | null>(null);
+  useEffect(() => {
+    getCatalog().then(setCatalog).catch(() => {});
+  }, []);
+
+  const universities: UniversityPin[] = zoomed
+    ? catalog?.regions.find((r) => r.id === zoomed)?.universities ??
+      FALLBACK_UNIVERSITIES[zoomed] ??
+      []
+    : [];
 
   const crumbs: Crumb[] = [
     { label: t.breadcrumb.home, href: "/" },
@@ -48,7 +62,7 @@ function MapFlow() {
             {zoomed && (
               <UniversityPins
                 key="pins"
-                universities={UNIVERSITIES}
+                universities={universities}
                 onSelect={(universityId) => router.push(`/university/${universityId}`)}
               />
             )}

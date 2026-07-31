@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState, useRef } from "react";
+import { Suspense, useCallback, useEffect, useState, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import { Upload, FileText, Loader2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,7 +63,8 @@ const LANG_OPTIONS: { value: Language; label: string }[] = [
   { value: "both", label: "Both" },
 ];
 
-export default function ExplainPage() {
+function ExplainPageInner() {
+  const searchParams = useSearchParams();
   const [courses, setCourses] = useState<Course[]>([]);
   const [selectedCourse, setSelectedCourse] = useState("");
   const [customCourseId, setCustomCourseId] = useState("");
@@ -90,7 +92,27 @@ export default function ExplainPage() {
     selectedCourse === "__custom" ? customCourseId : selectedCourse;
 
   useEffect(() => {
-    getCourses().then(setCourses).catch(() => {});
+    // Pre-select the course when arriving from a Major Space course card
+    const courseParam = searchParams.get("course");
+    getCourses()
+      .then((list) => {
+        setCourses(list);
+        if (courseParam) {
+          if (list.some((c) => c.course_id === courseParam)) {
+            setSelectedCourse(courseParam);
+          } else {
+            setSelectedCourse("__custom");
+            setCustomCourseId(courseParam);
+          }
+        }
+      })
+      .catch(() => {
+        if (courseParam) {
+          setSelectedCourse("__custom");
+          setCustomCourseId(courseParam);
+        }
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -537,5 +559,14 @@ export default function ExplainPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ExplainPage() {
+  // useSearchParams requires a Suspense boundary for static prerendering.
+  return (
+    <Suspense fallback={null}>
+      <ExplainPageInner />
+    </Suspense>
   );
 }
