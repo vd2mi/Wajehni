@@ -58,8 +58,12 @@ export interface CatalogCourse {
   title_ar: string;
   level: number;
   files: string[];
-  /** Optional resource folders, e.g. { Slides: ["Chapter1.pdf"], videos: [] } */
-  folders?: Record<string, string[]>;
+  /**
+   * Optional resource folders, e.g. { Slides: ["Chapter1.pdf"], videos: [] }.
+   * A `number` is the legacy count-only shape (older backends) — the UI
+   * tolerates it so a frontend/backend version mismatch never crashes.
+   */
+  folders?: Record<string, string[] | number>;
 }
 
 export interface CatalogMajor {

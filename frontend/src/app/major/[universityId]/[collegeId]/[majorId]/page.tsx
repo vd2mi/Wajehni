@@ -55,7 +55,7 @@ export default function MajorSpacePage() {
 
   // Group courses by level, ascending
   const levels: { level: number; courses: CatalogCourse[] }[] = [];
-  if (detail) {
+  if (detail && Array.isArray(detail.major?.courses)) {
     for (const course of detail.major.courses) {
       const existing = levels.find((l) => l.level === course.level);
       if (existing) existing.courses.push(course);
@@ -157,9 +157,14 @@ function FolderMenu({
 }: {
   course: CatalogCourse;
   name: string;
-  files: string[];
+  // `string[]` is the current shape; `number` is the legacy count-only shape
+  // served by older backends. Tolerating both keeps version skew from crashing.
+  files: string[] | number;
 }) {
   const router = useRouter();
+
+  const names = Array.isArray(files) ? files : [];
+  const count = Array.isArray(files) ? files.length : typeof files === "number" ? files : 0;
 
   function openFile(file: string) {
     const path = `${name}/${file}`;
@@ -174,41 +179,50 @@ function FolderMenu({
     }
   }
 
+  // No filenames to list (empty folder, or a legacy count-only payload):
+  // render a static, non-interactive chip rather than an empty dropdown.
+  if (names.length === 0) {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs text-muted-foreground">
+        <FolderOpen className="h-3 w-3" />
+        <span dir="ltr">
+          {name}
+          {count > 0 ? ` (${count})` : ""}
+        </span>
+      </span>
+    );
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs transition-colors hover:bg-accent">
           <FolderOpen className="h-3 w-3" />
           <span dir="ltr">
-            {name}
-            {files.length > 0 ? ` (${files.length})` : ""}
+            {name} ({names.length})
           </span>
           <ChevronDown className="h-3 w-3 text-muted-foreground" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
-        {files.length === 0 ? (
-          <DropdownMenuItem disabled>{t.majorSpace.emptyFolder}</DropdownMenuItem>
-        ) : (
-          files.map((file) => {
-            const isPdf = file.toLowerCase().endsWith(".pdf");
-            return (
-              <DropdownMenuItem key={file} onClick={() => openFile(file)} className="gap-2">
-                {isPdf ? (
-                  <BookOpen className="h-3.5 w-3.5 text-muted-foreground" />
-                ) : (
-                  <Download className="h-3.5 w-3.5 text-muted-foreground" />
-                )}
-                <span dir="ltr">{file}</span>
-                {!isPdf && (
-                  <span className="mr-auto text-xs text-muted-foreground">
-                    {t.majorSpace.downloadHint}
-                  </span>
-                )}
-              </DropdownMenuItem>
-            );
-          })
-        )}
+        {names.map((file) => {
+          const isPdf = file.toLowerCase().endsWith(".pdf");
+          return (
+            <DropdownMenuItem key={file} onClick={() => openFile(file)} className="gap-2">
+              {isPdf ? (
+                <BookOpen className="h-3.5 w-3.5 text-muted-foreground" />
+              ) : (
+                <Download className="h-3.5 w-3.5 text-muted-foreground" />
+              )}
+              <span dir="ltr">{file}</span>
+              {!isPdf && (
+                <span className="mr-auto text-xs text-muted-foreground">
+                  {t.majorSpace.downloadHint}
+                </span>
+              )}
+            </DropdownMenuItem>
+          );
+        })}
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -217,7 +231,9 @@ function FolderMenu({
 function CourseCard({ course }: { course: CatalogCourse }) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [fileCount, setFileCount] = useState(course.files.length);
+  const [fileCount, setFileCount] = useState(
+    Array.isArray(course.files) ? course.files.length : 0
+  );
   const [uploadState, setUploadState] = useState<"idle" | "uploading" | "done" | "failed">("idle");
 
   async function handleUpload(file: File) {
