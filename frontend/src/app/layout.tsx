@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans_Arabic } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
+import { t } from "@/lib/i18n";
 
 const ibmArabic = IBM_Plex_Sans_Arabic({
   subsets: ["arabic", "latin"],
@@ -10,8 +11,8 @@ const ibmArabic = IBM_Plex_Sans_Arabic({
 });
 
 export const metadata: Metadata = {
-  title: "وجهني — مساعد الدراسة الذكي",
-  description: "مساعد دراسي ذكي للطلاب الناطقين بالعربية",
+  title: t.app.metaTitle,
+  description: t.app.metaDescription,
 };
 
 export default function RootLayout({

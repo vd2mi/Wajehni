@@ -1,80 +1,69 @@
-import Link from "next/link";
-import { BookOpen, Calendar, GraduationCap, ArrowLeft } from "lucide-react";
+"use client";
 
-const FEATURES = [
-  {
-    href: "/explain",
-    icon: BookOpen,
-    title: "شرح المادة",
-    description: "ارفع ملف PDF واحصل على شرح واضح لكل صفحة مع ترجمة المصطلحات.",
-    cta: "ابدأ الشرح",
-  },
-  {
-    href: "/schedule",
-    icon: Calendar,
-    title: "جدول الدراسة",
-    description: "أدخل مهامك والموعد النهائي، واحصل على جدول يومي منظم.",
-    cta: "نظّم وقتك",
-  },
-  {
-    href: "/major",
-    icon: GraduationCap,
-    title: "اختيار التخصص",
-    description: "أجب على أسئلة بسيطة واحصل على توصيات مخصصة لتخصصك.",
-    cta: "اكتشف تخصصك",
-  },
-] as const;
+import { Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AnimatePresence } from "framer-motion";
+import { SaudiMap, REGIONS } from "@/components/map/saudi-map";
+import { UniversityPins } from "@/components/map/university-pins";
+import { Breadcrumbs, type Crumb } from "@/components/breadcrumbs";
+import { t } from "@/lib/i18n";
 
-export default function HomePage() {
+// Static for now — phase 3 replaces this with data from GET /catalog.
+const UNIVERSITIES = [
+  { id: "iau", name_ar: "جامعة الإمام عبدالرحمن بن فيصل", lat: 26.398, lng: 50.196 },
+];
+
+function MapFlow() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const regionParam = searchParams.get("region");
+  const zoomed = regionParam && REGIONS[regionParam]?.active ? regionParam : null;
+
+  const crumbs: Crumb[] = [
+    { label: t.breadcrumb.home, href: "/" },
+    ...(zoomed ? [{ label: REGIONS[zoomed].ar }] : []),
+  ];
+
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex flex-col">
-      {/* Hero */}
-      <section className="px-4 pt-20 pb-16 sm:pt-28 sm:pb-20">
-        <div className="mx-auto max-w-3xl">
-          <h1 className="text-5xl sm:text-6xl font-bold tracking-tight leading-[1.1]">
-            وجّهني
-          </h1>
-          <p className="mt-4 text-lg sm:text-xl text-muted-foreground max-w-lg leading-relaxed">
-            أداتك الدراسية — تشرح لك المادة، تنظم وقتك، وتساعدك تختار تخصصك.
-          </p>
-        </div>
-      </section>
+    <div className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden">
+      <div className="shrink-0 border-b px-4 py-2.5 sm:px-6">
+        <Breadcrumbs items={crumbs} />
+      </div>
 
-      {/* Features */}
-      <section className="px-4 pb-20">
-        <div className="mx-auto max-w-3xl">
-          <div className="space-y-0 border-t">
-            {FEATURES.map(({ href, icon: Icon, title, description, cta }) => (
-              <Link
-                key={href}
-                href={href}
-                className="group flex items-start gap-5 py-7 border-b transition-colors hover:bg-accent/40 -mx-4 px-4 sm:-mx-6 sm:px-6"
-              >
-                <div className="mt-1 shrink-0 h-10 w-10 rounded-md bg-muted flex items-center justify-center group-hover:bg-foreground/10 transition-colors">
-                  <Icon className="h-5 w-5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h2 className="text-base font-semibold mb-1">{title}</h2>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {description}
-                  </p>
-                </div>
-                <div className="shrink-0 mt-1 flex items-center gap-1.5 text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
-                  <span className="hidden sm:inline">{cta}</span>
-                  <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <div className="mt-auto px-4 py-6 border-t">
-        <p className="text-center text-xs text-muted-foreground">
-          وجهني — مشروع تعليمي مفتوح
+      <header className="shrink-0 px-4 pt-6 text-center sm:pt-8">
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          {zoomed ? REGIONS[zoomed].ar : t.map.title}
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+          {zoomed ? t.map.pickUniversity : t.map.subtitle}
         </p>
+      </header>
+
+      <div className="min-h-0 flex-1 px-2 pb-4 pt-2 sm:px-6">
+        <SaudiMap
+          zoomRegion={zoomed}
+          onRegionSelect={(regionId) => router.push(`/?region=${regionId}`)}
+        >
+          <AnimatePresence>
+            {zoomed && (
+              <UniversityPins
+                key="pins"
+                universities={UNIVERSITIES}
+                onSelect={(universityId) => router.push(`/university/${universityId}`)}
+              />
+            )}
+          </AnimatePresence>
+        </SaudiMap>
       </div>
     </div>
+  );
+}
+
+export default function HomePage() {
+  // useSearchParams requires a Suspense boundary for static prerendering.
+  return (
+    <Suspense fallback={null}>
+      <MapFlow />
+    </Suspense>
   );
 }

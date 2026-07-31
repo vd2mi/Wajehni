@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { BookOpen, Calendar, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { t } from "@/lib/i18n";
 
 const NAV_ITEMS = [
   { href: "/explain", label: "شرح المادة", icon: BookOpen },
@@ -19,11 +21,18 @@ export function Navbar() {
     <nav className="fixed top-0 inset-x-0 z-50 h-16 border-b bg-background/80 backdrop-blur-md">
       <div className="mx-auto max-w-6xl h-full flex items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-md bg-foreground flex items-center justify-center">
-            <span className="text-background text-sm font-bold">و</span>
-          </div>
+          <span className="h-9 overflow-hidden rounded-md bg-white flex items-center px-1">
+            <Image
+              src="/logo.jpeg"
+              alt={t.app.name}
+              width={66}
+              height={35}
+              className="h-8 w-auto"
+              priority
+            />
+          </span>
           <span className="text-base font-bold tracking-tight hidden sm:inline">
-            وجهني
+            {t.app.name}
           </span>
         </Link>
 
