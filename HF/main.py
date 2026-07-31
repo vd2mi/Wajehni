@@ -9,6 +9,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from openai import OpenAI
 
 from models import (
@@ -224,6 +225,16 @@ async def list_courses():
 @app.get("/catalog")
 async def get_catalog():
     return catalog_db
+
+
+@app.get("/course-files/{course_id}/{file_path:path}")
+async def get_course_file(course_id: str, file_path: str):
+    """Serve a file from a course's resource folder (data/<course_id>/...)."""
+    base = (DATA_DIR / course_id).resolve()
+    target = (base / file_path).resolve()
+    if not target.is_relative_to(base) or not target.is_file():
+        raise HTTPException(status_code=404, detail="File not found")
+    return FileResponse(target)
 
 
 @app.get("/catalog/major/{major_id}")

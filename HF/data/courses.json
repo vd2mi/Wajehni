@@ -1,5 +1,12 @@
 [
   {
+    "course_id": "NA_test",
+    "title": "Numerical Analysis",
+    "title_ar": "التحليل العددي",
+    "major": "Computer Science",
+    "files": ["NA_test/Slides/Chapter1.pdf"]
+  },
+  {
     "course_id": "CS101",
     "title": "Introduction to Programming",
     "title_ar": "مقدمة في البرمجة",

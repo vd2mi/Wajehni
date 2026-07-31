@@ -23,6 +23,7 @@ const PdfViewer = dynamic(
 
 import type { ExplainAction } from "@/components/pdf-viewer";
 import {
+  courseFileUrl,
   getCourses,
   explainQuestion,
   uploadPdf,
@@ -112,6 +113,25 @@ function ExplainPageInner() {
           setCustomCourseId(courseParam);
         }
       });
+
+    // Auto-load a server-side course file when arriving from a folder menu
+    const fileParam = searchParams.get("file");
+    if (courseParam && fileParam && fileParam.toLowerCase().endsWith(".pdf")) {
+      setUploading(true);
+      fetch(courseFileUrl(courseParam, fileParam))
+        .then((res) => {
+          if (!res.ok) throw new Error("file fetch failed");
+          return res.blob();
+        })
+        .then((blob) => {
+          setPdfUrl(URL.createObjectURL(blob));
+          // Path relative to the backend data dir, so page extraction finds it
+          setFileName(`${courseParam}/${fileParam}`);
+          setUploaded(true);
+        })
+        .catch(() => {})
+        .finally(() => setUploading(false));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

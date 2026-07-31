@@ -1,4 +1,10 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:7860";
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:7860";
+
+/** URL of a file inside a course's resource folder (served by the backend). */
+export function courseFileUrl(courseId: string, filePath: string): string {
+  const encodedPath = filePath.split("/").map(encodeURIComponent).join("/");
+  return `${API_BASE}/course-files/${encodeURIComponent(courseId)}/${encodedPath}`;
+}
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, {
@@ -52,8 +58,8 @@ export interface CatalogCourse {
   title_ar: string;
   level: number;
   files: string[];
-  /** Optional resource-folder breakdown, e.g. { Slides: 1, videos: 0 } */
-  folders?: Record<string, number>;
+  /** Optional resource folders, e.g. { Slides: ["Chapter1.pdf"], videos: [] } */
+  folders?: Record<string, string[]>;
 }
 
 export interface CatalogMajor {

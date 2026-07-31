@@ -2,13 +2,20 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { BookOpen, FileText, FolderOpen, Upload } from "lucide-react";
+import { BookOpen, ChevronDown, Download, FileText, FolderOpen, Upload } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Breadcrumbs, type Crumb } from "@/components/breadcrumbs";
 import { cn } from "@/lib/utils";
 import {
+  courseFileUrl,
   getCatalogMajor,
   uploadPdf,
   type CatalogCourse,
@@ -143,6 +150,70 @@ export default function MajorSpacePage() {
   );
 }
 
+function FolderMenu({
+  course,
+  name,
+  files,
+}: {
+  course: CatalogCourse;
+  name: string;
+  files: string[];
+}) {
+  const router = useRouter();
+
+  function openFile(file: string) {
+    const path = `${name}/${file}`;
+    if (file.toLowerCase().endsWith(".pdf")) {
+      // PDFs open directly in the learning page
+      router.push(
+        `/explain?course=${encodeURIComponent(course.course_id)}&file=${encodeURIComponent(path)}`
+      );
+    } else {
+      // Other formats can only be downloaded
+      window.open(courseFileUrl(course.course_id, path), "_blank");
+    }
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs transition-colors hover:bg-accent">
+          <FolderOpen className="h-3 w-3" />
+          <span dir="ltr">
+            {name}
+            {files.length > 0 ? ` (${files.length})` : ""}
+          </span>
+          <ChevronDown className="h-3 w-3 text-muted-foreground" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start">
+        {files.length === 0 ? (
+          <DropdownMenuItem disabled>{t.majorSpace.emptyFolder}</DropdownMenuItem>
+        ) : (
+          files.map((file) => {
+            const isPdf = file.toLowerCase().endsWith(".pdf");
+            return (
+              <DropdownMenuItem key={file} onClick={() => openFile(file)} className="gap-2">
+                {isPdf ? (
+                  <BookOpen className="h-3.5 w-3.5 text-muted-foreground" />
+                ) : (
+                  <Download className="h-3.5 w-3.5 text-muted-foreground" />
+                )}
+                <span dir="ltr">{file}</span>
+                {!isPdf && (
+                  <span className="mr-auto text-xs text-muted-foreground">
+                    {t.majorSpace.downloadHint}
+                  </span>
+                )}
+              </DropdownMenuItem>
+            );
+          })
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 function CourseCard({ course }: { course: CatalogCourse }) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -181,14 +252,8 @@ function CourseCard({ course }: { course: CatalogCourse }) {
 
         {course.folders && (
           <div className="flex flex-wrap gap-1.5">
-            {Object.entries(course.folders).map(([name, count]) => (
-              <Badge key={name} variant="outline" className="gap-1 text-xs font-normal">
-                <FolderOpen className="h-3 w-3" />
-                <span dir="ltr">
-                  {name}
-                  {count > 0 ? ` (${count})` : ""}
-                </span>
-              </Badge>
+            {Object.entries(course.folders).map(([name, files]) => (
+              <FolderMenu key={name} course={course} name={name} files={files} />
             ))}
           </div>
         )}

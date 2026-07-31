@@ -289,12 +289,12 @@
                       "title": "Numerical Analysis",
                       "title_ar": "التحليل العددي",
                       "level": 5,
-                      "files": ["Slides/Chapter1.pptx"],
+                      "files": ["Slides/Chapter1.pdf", "Slides/Chapter1.pptx"],
                       "folders": {
-                        "Slides": 1,
-                        "FormulaSheets": 0,
-                        "OldQuiz": 0,
-                        "videos": 0
+                        "Slides": ["Chapter1.pdf", "Chapter1.pptx"],
+                        "FormulaSheets": [],
+                        "OldQuiz": [],
+                        "videos": []
                       }
                     }
                   ]

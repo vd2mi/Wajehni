@@ -38,6 +38,8 @@ export const t = {
     filesCount: (n: number) =>
       n === 0 ? "لا توجد ملفات" : n === 1 ? "ملف واحد" : `${n} ملفات`,
     openInExplain: "افتح في الشرح",
+    emptyFolder: "لا توجد ملفات",
+    downloadHint: "تنزيل",
     uploadFile: "رفع ملف PDF",
     uploading: "جارٍ الرفع...",
     uploadDone: "تم الرفع",
