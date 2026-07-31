@@ -114,8 +114,12 @@ function ExplainPageInner() {
         }
       });
 
-    // Auto-load a server-side course file when arriving from a folder menu
+    // Auto-load a server-side course file when arriving from a folder menu.
+    // Guarded against React StrictMode's double effect invocation in dev —
+    // without `cancelled`, two overlapping fetches each set a blob URL on
+    // <Document>, and react-pdf aborts mid-init on the second swap.
     const fileParam = searchParams.get("file");
+    let cancelled = false;
     if (courseParam && fileParam && fileParam.toLowerCase().endsWith(".pdf")) {
       setUploading(true);
       fetch(courseFileUrl(courseParam, fileParam))
@@ -124,14 +128,20 @@ function ExplainPageInner() {
           return res.blob();
         })
         .then((blob) => {
+          if (cancelled) return;
           setPdfUrl(URL.createObjectURL(blob));
           // Path relative to the backend data dir, so page extraction finds it
           setFileName(`${courseParam}/${fileParam}`);
           setUploaded(true);
         })
         .catch(() => {})
-        .finally(() => setUploading(false));
+        .finally(() => {
+          if (!cancelled) setUploading(false);
+        });
     }
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
