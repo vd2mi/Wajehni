@@ -163,8 +163,8 @@ function FolderMenu({
 }) {
   const router = useRouter();
 
-  const names = Array.isArray(files) ? files : [];
-  const count = Array.isArray(files) ? files.length : typeof files === "number" ? files : 0;
+  const isArray = Array.isArray(files);
+  const names = isArray ? (files as string[]) : [];
 
   function openFile(file: string) {
     const path = `${name}/${file}`;
@@ -179,9 +179,10 @@ function FolderMenu({
     }
   }
 
-  // No filenames to list (empty folder, or a legacy count-only payload):
-  // render a static, non-interactive chip rather than an empty dropdown.
-  if (names.length === 0) {
+  // Legacy count-only payload (a number, from an out-of-date backend): we have
+  // no filenames to list, so fall back to a static chip instead of crashing.
+  if (!isArray) {
+    const count = typeof files === "number" ? files : 0;
     return (
       <span className="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs text-muted-foreground">
         <FolderOpen className="h-3 w-3" />
@@ -193,36 +194,43 @@ function FolderMenu({
     );
   }
 
+  // Every real folder is an openable dropdown — empty ones included, so the
+  // set of folders reads consistently and shows "no files yet" when opened.
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs transition-colors hover:bg-accent">
           <FolderOpen className="h-3 w-3" />
           <span dir="ltr">
-            {name} ({names.length})
+            {name}
+            {names.length > 0 ? ` (${names.length})` : ""}
           </span>
           <ChevronDown className="h-3 w-3 text-muted-foreground" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
-        {names.map((file) => {
-          const isPdf = file.toLowerCase().endsWith(".pdf");
-          return (
-            <DropdownMenuItem key={file} onClick={() => openFile(file)} className="gap-2">
-              {isPdf ? (
-                <BookOpen className="h-3.5 w-3.5 text-muted-foreground" />
-              ) : (
-                <Download className="h-3.5 w-3.5 text-muted-foreground" />
-              )}
-              <span dir="ltr">{file}</span>
-              {!isPdf && (
-                <span className="mr-auto text-xs text-muted-foreground">
-                  {t.majorSpace.downloadHint}
-                </span>
-              )}
-            </DropdownMenuItem>
-          );
-        })}
+        {names.length === 0 ? (
+          <DropdownMenuItem disabled>{t.majorSpace.emptyFolder}</DropdownMenuItem>
+        ) : (
+          names.map((file) => {
+            const isPdf = file.toLowerCase().endsWith(".pdf");
+            return (
+              <DropdownMenuItem key={file} onClick={() => openFile(file)} className="gap-2">
+                {isPdf ? (
+                  <BookOpen className="h-3.5 w-3.5 text-muted-foreground" />
+                ) : (
+                  <Download className="h-3.5 w-3.5 text-muted-foreground" />
+                )}
+                <span dir="ltr">{file}</span>
+                {!isPdf && (
+                  <span className="mr-auto text-xs text-muted-foreground">
+                    {t.majorSpace.downloadHint}
+                  </span>
+                )}
+              </DropdownMenuItem>
+            );
+          })
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
